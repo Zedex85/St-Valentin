@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Fonts kawaii -->
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+
+<style>
+body {
+    background-color: #F4C2D7;
+    color: white;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Patrick Hand', Arial, sans-serif;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* TITRE */
+h1 {
+    font-family: 'Comic Neue', cursive;
+    font-size: 3em;
+    margin-top: 30px;
+    text-shadow: 2px 2px 5px #ffb6c1;
+}
+
+/* Texte et bouton */
+p, h2 {
+    position: relative;
+    z-index: 10;
+}
+
+.btn {
+    background-color: white;
+    color: hotpink;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 12px;
+    font-size: 18px;
+    display: inline-block;
+    margin-top: 20px;
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #ffe1ec;
+    transform: scale(1.1) rotate(-5deg);
+}
+
+/* Hello Kitty flottantes */
+.kitty {
+    position: absolute;
+    width: 120px;
+    pointer-events: none;
+    animation: float 4s ease-in-out infinite alternate;
+}
+
+/* Animation flottante */
+@keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(3deg); }
+    100% { transform: translateY(0px) rotate(-3deg); }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1><strong>HELLO KITTY GRATUIT</strong></h1>
+    <p><strong>Plus de 200000 articles gratuits !!!!</strong></p>
+</header>
+
+<section>
+    <h2>Si tu veux, clique juste ici</h2>
+
+    <!-- Son Miaou -->
+    <audio id="meowSound" src="https://www.soundjay.com/cat/cat-meow-1.mp3" preload="auto"></audio>
+
+    <a href="valentin2.html" class="btn" id="kittyBtn">Clique ici</a>
+</section>
+
+<script>
+// --- POSITIONS DES KITTIES ---
+const positions = [
+  { top:"2%", left:"5%" }, { top:"2%", left:"20%" }, { top:"2%", left:"35%" }, { top:"2%", left:"50%" },
+  { top:"2%", left:"65%" }, { top:"2%", left:"80%" }, { top:"20%", right:"2%" }, { top:"40%", right:"2%" },
+  { top:"60%", right:"2%" }, { top:"80%", right:"2%" }, { bottom:"2%", left:"5%" }, { bottom:"2%", left:"20%" },
+  { bottom:"2%", left:"35%" }, { bottom:"2%", left:"50%" }, { bottom:"2%", left:"65%" }, { bottom:"2%", left:"80%" },
+  { top:"20%", left:"2%" }, { top:"40%", left:"2%" }, { top:"60%", left:"2%" }, { top:"80%", left:"2%" }
+];
+
+let positionIndex = 0;
+
+for (let i = 2; i <= 20; i++) {
+  if (i === 6) continue; // on enlève l'image 6
+  if (positionIndex >= positions.length) break;
+
+  const img = document.createElement("img");
+  img.src = `hello_kitty${i}-removebg-preview.png`; // Assure toi que les images sont dans le même dossier
+  img.className = "kitty";
+
+  document.body.appendChild(img);
+
+  // Conversion des positions en pixels
+  const pos = positions[positionIndex];
+  let x = pos.left ? window.innerWidth * parseFloat(pos.left)/100 : window.innerWidth - (window.innerWidth * parseFloat(pos.right)/100) - 120;
+  let y = pos.top ? window.innerHeight * parseFloat(pos.top)/100 : window.innerHeight - (window.innerHeight * parseFloat(pos.bottom)/100) - 120;
+
+  img.style.left = x + "px";
+  img.style.top = y + "px";
+  img.style.position = "absolute";
+
+  positionIndex++;
+
+  // Effet rebond sur clic
+  img.addEventListener("click", () => startBounce(img));
+}
+
+// --- BOUNCE ---
+function startBounce(img) {
+  let speedX = (Math.random() * 4 + 2) * (Math.random() < 0.5 ? 1 : -1);
+  let speedY = (Math.random() * 4 + 2) * (Math.random() < 0.5 ? 1 : -1);
+
+  function move() {
+    let rect = img.getBoundingClientRect();
+    let x = rect.left + speedX;
+    let y = rect.top + speedY;
+
+    if (x <= 0 || x + rect.width >= window.innerWidth) speedX *= -1;
+    if (y <= 0 || y + rect.height >= window.innerHeight) speedY *= -1;
+
+    img.style.left = x + "px";
+    img.style.top = y + "px";
+
+    requestAnimationFrame(move);
+  }
+
+  move();
+}
+
+// --- SON DU BOUTON ---
+const button = document.getElementById("kittyBtn");
+const meow = document.getElementById("meowSound");
+
+button.addEventListener("click", (e) => {
+    e.preventDefault(); // Empêche navigation immédiate
+    meow.currentTime = 0;
+    meow.play().catch(() => console.log("Impossible de jouer le son"));
+
+    // Redirection après un court délai pour entendre le son
+    setTimeout(() => { window.location.href = button.href; }, 150);
+});
+</script>
+
+</body>
+</html>
+
